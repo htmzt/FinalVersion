@@ -63,11 +63,11 @@ class UserRegistration(BaseModel):
     class Config:
         json_schema_extra = {
             "example": {
-                "email": "john.doe@example.com",
-                "password": "SecurePass123!",
-                "prenom": "John",
-                "nom": "Doe",
-                "company_name": "Acme Corporation",
+                "email": "admin@example.com",
+                "password": "Admin123!",
+                "prenom": "Test",
+                "nom": "Test",
+                "company_name": "SIB",
                 "company_logo": "https://example.com/logo.png"
             }
         }
@@ -80,8 +80,8 @@ class UserLogin(BaseModel):
     class Config:
         json_schema_extra = {
             "example": {
-                "email": "john.doe@example.com",
-                "password": "SecurePass123!"
+                "email": "admin@example.com",
+                "password": "Admin123!"
             }
         }
 
@@ -163,11 +163,11 @@ async def register(
     **Example:**
     ```json
     {
-      "email": "john.doe@example.com",
-      "password": "SecurePass123!",
-      "prenom": "John",
-      "nom": "Doe",
-      "company_name": "Acme Corporation"
+      "email": "admin@example.com",
+      "password": "Admin123!",
+      "prenom": "Test",
+      "nom": "Test",
+      "company_name": "SIB"
     }
     ```
     """
@@ -189,7 +189,7 @@ async def register(
             company_name=user_data.company_name,
             company_logo=user_data.company_logo,
             is_active=True,
-            email_verified=False  # In production, send verification email
+            email_verified=False 
         )
         
         db.add(new_user)
@@ -245,8 +245,8 @@ async def login(
     **Example:**
     ```json
     {
-      "email": "john.doe@example.com",
-      "password": "SecurePass123!"
+      "email": "admin@example.com",
+      "password": "Admin123!"
     }
     ```
     """
@@ -472,43 +472,6 @@ async def logout(current_user: User = Depends(get_current_user)):
     )
 
 
-@router.post("/request-password-reset", response_model=MessageResponse)
-async def request_password_reset(
-    reset_request: PasswordResetRequest,
-    db: Session = Depends(get_db)
-):
-    """
-    Request password reset link
-    
-    **Note:** In production, this should:
-    1. Generate a secure reset token
-    2. Send email with reset link
-    3. Token expires after 1 hour
-    
-    **Current implementation:** Placeholder for development
-    
-    **Example:**
-    ```json
-    {
-      "email": "john.doe@example.com"
-    }
-    ```
-    """
-    # Find user
-    user = db.query(User).filter(User.email == reset_request.email.lower()).first()
-    
-    # Always return success (don't reveal if email exists)
-    logger.info(f"🔑 Password reset requested for: {reset_request.email}")
-    
-    # TODO: In production, implement:
-    # 1. Generate reset token
-    # 2. Store token in database with expiry
-    # 3. Send email with reset link
-    # 4. Create /reset-password endpoint to handle token
-    
-    return MessageResponse(
-        message="If an account exists with this email, a password reset link will be sent. (Not implemented in development)"
-    )
 
 
 @router.get("/validate-token")
