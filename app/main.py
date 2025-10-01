@@ -83,29 +83,6 @@ app.include_router(summary.router)
 app.include_router(gap_analysis.router)
 
 
-def create_default_user(db: Session):
-    """Create default admin user if none exists"""
-    from app.auth import get_password_hash
-    from app.models import User
-    from datetime import datetime
-    
-    default_email = "admin@example.com"
-    existing_user = db.query(User).filter(User.email == default_email).first()
-    
-    if not existing_user:
-        default_user = User(
-            email=default_email,
-            password_hash=get_password_hash("admin"),
-            prenom="Admin",
-            nom="User",
-            company_name="Default Company",
-            is_active=True,
-            email_verified=True,
-            created_at=datetime.utcnow()
-        )
-        db.add(default_user)
-        db.commit()
-        logger.info("Default user created: admin@example.com / admin")
 
 
 @app.on_event("startup")
@@ -113,7 +90,6 @@ async def startup_event():
     """Initialize startup tasks"""
     db = SessionLocal()
     try:
-        create_default_user(db)
         models.Base.metadata.create_all(bind=engine)
     except Exception as e:
         logger.error(f"Error during startup: {str(e)}")
