@@ -10,3 +10,4 @@ python-dotenv==1.0.0
 openpyxl==3.1.5
 xlsxwriter==3.2.0
 pandas
+pydantic[email]==2.7.1
